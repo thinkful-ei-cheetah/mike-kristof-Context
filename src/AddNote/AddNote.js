@@ -1,13 +1,12 @@
 import React, { Component } from 'react'
 import NotefulForm from '../NotefulForm/NotefulForm'
 import './AddNote.css'
+import OurContext from '../MainContext'
 
 export default class AddNote extends Component {
-  static defaultProps = {
-    folders: [],
-  }
+  static contextType = OurContext
   render() {
-    const { folders } = this.props
+
     return (
       <section className='AddNote'>
         <h2>Create a note</h2>
@@ -30,7 +29,7 @@ export default class AddNote extends Component {
             </label>
             <select id='note-folder-select'>
               <option value={null}>...</option>
-              {folders.map(folder =>
+              {this.context.folders.map(folder =>
                 <option key={folder.id} value={folder.id}>
                   {folder.name}
                 </option>

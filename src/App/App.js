@@ -10,6 +10,7 @@ import AddNote from '../AddNote/AddNote'
 import dummyStore from '../dummy-store'
 import { getNotesForFolder, findNote, findFolder } from '../notes-helpers'
 import './App.css'
+import OurContext from '../MainContext';
 
 class App extends Component {
   state = {
@@ -17,13 +18,17 @@ class App extends Component {
     folders: [],
   };
 
+  static contextType = OurContext
+
   componentDidMount() {
     // fake date loading from API call
-    setTimeout(() => this.setState(dummyStore), 600)
+    // setTimeout(() => 
+    this.setState(dummyStore)
+    // , 600)
   }
 
   renderNavRoutes() {
-    const { notes, folders } = this.state
+    
     return (
       <>
         {['/', '/folder/:folderId'].map(path =>
@@ -33,8 +38,6 @@ class App extends Component {
             path={path}
             render={routeProps =>
               <NoteListNav
-                folders={folders}
-                notes={notes}
                 {...routeProps}
               />
             }
@@ -44,8 +47,9 @@ class App extends Component {
           path='/note/:noteId'
           render={routeProps => {
             const { noteId } = routeProps.match.params
-            const note = findNote(notes, noteId) || {}
-            const folder = findFolder(folders, note.folderId)
+            const note = findNote(this.context.notes, noteId) || {}
+            
+            const folder = findFolder(this.context.folders, note.folderId)
             return (
               <NotePageNav
                 {...routeProps}
@@ -67,7 +71,8 @@ class App extends Component {
   }
 
   renderMainRoutes() {
-    const { notes, folders } = this.state
+    
+    const { notes } = this.state
     return (
       <>
         {['/', '/folder/:folderId'].map(path =>
@@ -91,10 +96,10 @@ class App extends Component {
           path='/note/:noteId'
           render={routeProps => {
             const { noteId } = routeProps.match.params
-            const note = findNote(notes, noteId)
+            const note = findNote(this.context.notes, noteId)
             return (
               <NotePageMain
-                {...routeProps}
+                 {...routeProps}
                 note={note}
               />
             )
@@ -110,7 +115,7 @@ class App extends Component {
             return (
               <AddNote
                 {...routeProps}
-                folders={folders}
+                
               />
             )
           }}
@@ -120,22 +125,28 @@ class App extends Component {
   }
 
   render() {
-    return (
-      <div className='App'>
-        <nav className='App__nav'>
-          {this.renderNavRoutes()}
-        </nav>
-        <header className='App__header'>
-          <h1>
-            <Link to='/'>Noteful</Link>
-            {' '}
-            <FontAwesomeIcon icon='check-double' />
-          </h1>
-        </header>
-        <main className='App__main'>
-          {this.renderMainRoutes()}
-        </main>
-      </div>
+    console.log(this.state)
+    //const something = { notes: this.state.notes, folders: this.state.folders}
+      return (
+       <OurContext.Provider value={this.state}>
+        <div className='App'>
+          <nav className='App__nav'>
+
+            {this.renderNavRoutes()}
+          </nav>
+          <header className='App__header'>
+            <h1>
+              <Link to='/'>Noteful</Link>
+              {' '}
+              <FontAwesomeIcon icon='check-double' />
+            </h1>
+          </header>
+          <main className='App__main'>
+            {this.renderMainRoutes()}
+          </main>
+        </div>
+        </OurContext.Provider>
+
     )
   }
 }
