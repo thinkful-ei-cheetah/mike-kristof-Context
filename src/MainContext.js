@@ -1,9 +1,8 @@
 import React from 'react';
 
 const OurContext = React.createContext({
-  folders:[],
-  notes:[],
-
+  car: 'bob'
 })
 
 export default OurContext;
+

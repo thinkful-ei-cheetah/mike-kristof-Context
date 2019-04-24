@@ -11,7 +11,7 @@ export default class NoteListNav extends React.Component {
  
       return (
         <OurContext.Consumer >
-          {(context)=>{     
+          {(context)=>{     console.log(context)
  
       return( <div className='NoteListNav'>
         {this.contextType}

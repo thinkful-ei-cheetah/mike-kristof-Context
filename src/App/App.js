@@ -21,14 +21,22 @@ class App extends Component {
   static contextType = OurContext
 
   componentDidMount() {
-    // fake date loading from API call
-    // setTimeout(() => 
-    this.setState(dummyStore)
-    // , 600)
+    
+    
+     setTimeout(() => this.setState(dummyStore) , 600)
+  }
+
+
+  getData = async () =>{
+    const res = await fetch('')
+  
+
+
+
   }
 
   renderNavRoutes() {
-    
+
     return (
       <>
         {['/', '/folder/:folderId'].map(path =>
@@ -96,7 +104,7 @@ class App extends Component {
           path='/note/:noteId'
           render={routeProps => {
             const { noteId } = routeProps.match.params
-            const note = findNote(this.context.notes, noteId)
+            const note = findNote(notes, noteId)
             return (
               <NotePageMain
                  {...routeProps}
