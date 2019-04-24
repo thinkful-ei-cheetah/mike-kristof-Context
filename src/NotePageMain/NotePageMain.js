@@ -3,12 +3,13 @@ import Note from '../Note/Note'
 import './NotePageMain.css'
 
 export default function NotePageMain(props) {
-
+ 
   console.log(props)
   
   return (
     <section className='NotePageMain'>
       <Note
+        props={props}
         id={props.note.id}
         name={props.note.name}
         modified={props.note.modified}

@@ -7,7 +7,6 @@ import NoteListMain from '../NoteListMain/NoteListMain'
 import NotePageMain from '../NotePageMain/NotePageMain'
 import AddFolder from '../AddFolder/AddFolder'
 import AddNote from '../AddNote/AddNote'
-import dummyStore from '../dummy-store'
 import { getNotesForFolder, findNote, findFolder } from '../notes-helpers'
 import './App.css'
 import OurContext from '../MainContext';
@@ -21,22 +20,17 @@ class App extends Component {
   static contextType = OurContext
 
   componentDidMount() {
-    
-    
-     setTimeout(() => this.setState(dummyStore) , 600)
+    this.getData().then(data=>this.setState(data))
   }
 
-
   getData = async () =>{
-    const res = await fetch('')
-  
-
-
-
+    const res = await Promise.all([fetch('http://localhost:9090/folders'), fetch('http://localhost:9090/notes')])
+    const [folders, notes] =  await Promise.all(res.map(res => res.json()))
+    return {folders, notes}
   }
 
   renderNavRoutes() {
-
+    console.log(this.context)
     return (
       <>
         {['/', '/folder/:folderId'].map(path =>
@@ -78,8 +72,23 @@ class App extends Component {
     )
   }
 
+  handleDelete = (noteId, location) => {
+    let data//const newNotes = this.state.notes.filter(note => note.Id !== noteId )
+    console.log(location)
+    fetch(`http://localhost:9090/notes/${noteId}`,{
+      method: 'DELETE'
+    })
+    .then(()=>{
+     this.getData().then((data)=>this.setState(data)) 
+    }).then(()=>{
+      if (location && location.match.path ==="/note/:noteId") {
+        location.history.goBack();
+      }
+    })
+  }
+
   renderMainRoutes() {
-    
+   
     const { notes } = this.state
     return (
       <>
@@ -133,10 +142,11 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state)
-    //const something = { notes: this.state.notes, folders: this.state.folders}
+    console.log(this.context)
+
+    const something = { notes: this.state.notes, folders: this.state.folders, delete: this.handleDelete}
       return (
-       <OurContext.Provider value={this.state}>
+       <OurContext.Provider value={something}>
         <div className='App'>
           <nav className='App__nav'>
 
@@ -154,9 +164,7 @@ class App extends Component {
           </main>
         </div>
         </OurContext.Provider>
-
     )
   }
 }
-
 export default App
